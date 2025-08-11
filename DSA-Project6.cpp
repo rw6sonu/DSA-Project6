@@ -8,12 +8,10 @@ private:
     double balance;
 
 public:
-    BankAccount(int accNum, string accName, double initialBalance)
-    {
-        accountNumber = accNum;
-        accountHolderName = accName;
-        balance = initialBalance;
-    }
+
+      BankAccount(int accNum, string accName, double initialBalance)
+    : accountNumber(accNum), accountHolderName(accName), balance(initialBalance) {}
+
 
     virtual ~BankAccount() {}
 
@@ -25,10 +23,11 @@ public:
     {
         return accountHolderName;
     }
-    double getBalance() const
+      double getBalance() const
     {
         return balance;
     }
+    
 
     virtual void deposit(double amount)
     {
@@ -54,6 +53,7 @@ public:
             cout << "Invalid withdrawal or insufficient funds!\n";
         }
     }
+  
 
     virtual void displayAccountInfo() const
     {
@@ -65,6 +65,12 @@ public:
     {
         cout << "Interest calculation not available for base account.\n";
     }
+    
+protected:
+    // Protected function for subclasses to adjust balance directly
+    void adjustBalance(double amount) {
+        balance += amount;
+    }
 };
 class SavingsAccount : public BankAccount
 {
@@ -75,7 +81,7 @@ public:
     SavingsAccount(int accNum, string accName, double initialBalance, double rate)
         : BankAccount(accNum, accName, initialBalance), interestRate(rate) {}
 
-    void calculateInterest() const
+    void calculateInterest() const override
     {
         double interest = getBalance() * (interestRate / 100);
         cout << "Savings Account Interest: " << interest << endl;
@@ -90,12 +96,13 @@ public:
     CheckingAccount(int accNum, string accName, double initialBalance, double limit)
         : BankAccount(accNum, accName, initialBalance), overdraftLimit(limit) {}
 
-    void withdraw(double amount)
+    void withdraw(double amount)override
     {
         if (amount > 0 && amount <= getBalance() + overdraftLimit)
         {
             double newBalance = getBalance() - amount;
-            deposit(-amount);
+            adjustBalance(-amount);
+             cout << "Withdrawn: " << amount << " | New Balance: " << getBalance() << endl;
         }
         else
         {
@@ -128,7 +135,7 @@ int main()
 {
 
     SavingsAccount sa(101, "Sakshi", 5000, 4);
-    CheckingAccount ca(102, "Prachi", 10000, 500);
+    CheckingAccount ca(102, "Prachi", 20000, 500);
     FixedDepositAccount fda(103, "Palak", 20000, 6, 8);
 
     BankAccount *accounts[] = {&sa, &ca, &fda};
@@ -167,7 +174,7 @@ int main()
                 break;
 
                 case 3:
-                accounts[accTypes]-> deposit(amount);
+                accounts[accTypes]-> displayAccountInfo();
                 break;
 
                 case 4:
@@ -183,3 +190,131 @@ int main()
 
     return 0;
 }
+
+/*---- Banking System Menu ----
+1. Deposit
+2. Withdraw
+3. Display Account Info
+4. Calculate Interest
+0. Exit
+ Enter your choice: 1
+Select Account (0: Saving, 1: Checking, 2: Fixed Deposit):0
+Enter amount to deposit: 5000
+Deposited: 5000 | New Balance: 10000
+---- Banking System Menu ----
+1. Deposit
+2. Withdraw
+3. Display Account Info
+4. Calculate Interest
+0. Exit
+ Enter your choice: 1
+Select Account (0: Saving, 1: Checking, 2: Fixed Deposit):1
+Enter amount to deposit: 5000
+Deposited: 5000 | New Balance: 25000
+---- Banking System Menu ----
+1. Deposit
+2. Withdraw
+3. Display Account Info
+4. Calculate Interest
+0. Exit
+ Enter your choice: 1
+Select Account (0: Saving, 1: Checking, 2: Fixed Deposit):2
+Enter amount to deposit: 5000
+Deposited: 5000 | New Balance: 25000
+---- Banking System Menu ----
+1. Deposit
+2. Withdraw
+3. Display Account Info
+4. Calculate Interest
+0. Exit
+ Enter your choice: 2
+Select Account (0: Saving, 1: Checking, 2: Fixed Deposit):0
+Enter amount to withdraw: 2000
+Withdrawn: 2000 | New Balance: 8000
+---- Banking System Menu ----
+1. Deposit
+2. Withdraw
+3. Display Account Info
+4. Calculate Interest
+0. Exit
+ Enter your choice: 2
+Select Account (0: Saving, 1: Checking, 2: Fixed Deposit):1
+Enter amount to withdraw: 4000
+Withdrawn: 4000 | New Balance: 21000
+---- Banking System Menu ----
+1. Deposit
+2. Withdraw
+3. Display Account Info
+4. Calculate Interest
+0. Exit
+ Enter your choice: 2                                                                              
+Select Account (0: Saving, 1: Checking, 2: Fixed Deposit):2
+Enter amount to withdraw: 5000
+Withdrawn: 5000 | New Balance: 20000
+---- Banking System Menu ----
+1. Deposit
+2. Withdraw
+3. Display Account Info
+4. Calculate Interest
+0. Exit
+ Enter your choice: 3
+Select Account (0: Saving, 1: Checking, 2: Fixed Deposit):0
+Account Number: 101
+Account Holder: Sakshi
+Balance: 8000
+---- Banking System Menu ----
+1. Deposit
+2. Withdraw
+3. Display Account Info
+4. Calculate Interest
+0. Exit
+ Enter your choice: 3
+Select Account (0: Saving, 1: Checking, 2: Fixed Deposit):1
+Account Number: 102
+Account Holder: Prachi
+Balance: 21000
+---- Banking System Menu ----
+1. Deposit
+2. Withdraw
+3. Display Account Info
+4. Calculate Interest
+0. Exit
+ Enter your choice: 3
+Select Account (0: Saving, 1: Checking, 2: Fixed Deposit):2
+Account Number: 103
+Account Holder: Palak
+Balance: 20000
+---- Banking System Menu ----
+1. Deposit
+2. Withdraw
+3. Display Account Info
+4. Calculate Interest
+0. Exit
+ Enter your choice: 4
+Select Account (0: Saving, 1: Checking, 2: Fixed Deposit):0
+Savings Account Interest: 320
+---- Banking System Menu ----
+1. Deposit
+2. Withdraw
+3. Display Account Info
+4. Calculate Interest
+0. Exit
+ Enter your choice: 4
+Select Account (0: Saving, 1: Checking, 2: Fixed Deposit):1
+Checking accounts typically don't earn interest.
+---- Banking System Menu ----
+1. Deposit
+2. Withdraw
+3. Display Account Info
+4. Calculate Interest
+0. Exit
+ Enter your choice: 4
+Select Account (0: Saving, 1: Checking, 2: Fixed Deposit):2
+Fixed Deposit Interest (6 months): 800
+---- Banking System Menu ----
+1. Deposit
+2. Withdraw
+3. Display Account Info
+4. Calculate Interest
+0. Exit
+ Enter your choice: 0*/
